@@ -1,25 +1,18 @@
-//  JENKINSFILE - CI/CD Pipeline
-//  Stages: Checkout → Install → Lint → Test → Build → Archive
-
-
 pipeline {
 
-    // Run on any available agent (or specify 'agent { label "linux" }')
     agent any
 
     // ── Environment variables 
-    //     environment {
+    environment {
         NODE_ENV     = 'test'
         APP_NAME     = 'cicd-node-app'
         DOCKER_IMAGE = "ravisharma79/${APP_NAME}"
     }
 
-    // ── Tool versions (must match what's configured in Jenkins) ──
     tools {
         nodejs 'NodeJS-18'   // Configure this in: Manage Jenkins → Global Tool Configuration
     }
 
-    // ── Pipeline options ───────────────────────────────────
     options {
         timeout(time: 20, unit: 'MINUTES')
         buildDiscarder(logRotator(numToKeepStr: '10'))
@@ -27,14 +20,12 @@ pipeline {
         ansiColor('xterm')     // Colored output (requires AnsiColor plugin)
     }
 
-    // ── Trigger: poll SCM every minute OR on GitHub webhook ──
     triggers {
         pollSCM('* * * * *')
     }
 
     stages {
 
-        // ── STAGE 0: Checkout ────────────────────────────────────
         stage('Checkout') {
             steps {
                 echo '📦 Checking out source code...'
@@ -43,7 +34,6 @@ pipeline {
             }
         }
 
-        // ── STAGE 1: Install Dependencies ────────────────────────
         stage('Install') {
             steps {
                 echo '📥 Installing Node.js dependencies...'
@@ -54,9 +44,6 @@ pipeline {
             }
         }
 
-        // ── STAGE 2: LINT ────────────────────────────────────────
-        // Checks code style, syntax errors, and bad patterns.
-        // Fails the pipeline early before wasting time on tests.
         stage('Lint') {
             steps {
                 echo '🔍 Running ESLint...'
@@ -87,9 +74,6 @@ pipeline {
             }
         }
 
-        // ── STAGE 3: TEST ────────────────────────────────────────
-        // Runs unit tests + integration tests with coverage.
-        // Pipeline fails if coverage drops below thresholds in package.json.
         stage('Test') {
             environment {
                 NODE_ENV = 'test'
@@ -125,9 +109,6 @@ pipeline {
             }
         }
 
-        // ── STAGE 4: BUILD ───────────────────────────────────────
-        // Bundles the app into dist/, writes a build manifest.
-        // Only runs after Lint + Test both pass.
         stage('Build') {
             steps {
                 echo '🔨 Building application...'
@@ -144,8 +125,6 @@ pipeline {
             }
         }
 
-        // ── STAGE 5: DOCKER BUILD (Optional) ────────────────────
-        // Uncomment when Docker is available on your Jenkins agent
         /*
         stage('Docker Build') {
             steps {
@@ -180,9 +159,8 @@ pipeline {
             }
         }
 
-    } // end stages
+    } 
 
-    // ── Post-pipeline notifications ───────────────────────
     post {
         success {
             echo """
@@ -210,4 +188,4 @@ pipeline {
         }
     }
 
-} // end pipeline
+}
