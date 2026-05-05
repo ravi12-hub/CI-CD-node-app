@@ -1,0 +1,61 @@
+{
+  "name": "cicd-node-app",
+  "version": "1.0.0",
+  "description": "A Node.js app to learn CI/CD with Jenkins - Lint, Test, and Build stages",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
+    "lint": "eslint src/**/*.js tests/**/*.js --fix-dry-run",
+    "lint:fix": "eslint src/**/*.js tests/**/*.js --fix",
+    "test": "jest --coverage --verbose",
+    "test:ci": "jest --coverage --ci --reporters=default --reporters=jest-junit",
+    "build": "node scripts/build.js",
+    "build:check": "node -e \"require('./src/app.js'); console.log('Build check passed!')\" && echo 'App loads successfully'"
+  },
+  "keywords": [
+    "cicd",
+    "jenkins",
+    "devops",
+    "nodejs",
+    "learning"
+  ],
+  "author": "Ravi Sharma",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "express": "^4.22.1",
+    "json": "^11.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.54.0",
+    "eslint-plugin-node": "^11.1.0",
+    "jest": "^29.7.0",
+    "jest-junit": "^16.0.0",
+    "nodemon": "^3.0.2",
+    "supertest": "^6.3.3"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "collectCoverageFrom": [
+      "src/**/*.js"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "lines": 70,
+        "functions": 70,
+        "branches": 60,
+        "statements": 70
+      }
+    },
+    "coverageDirectory": "coverage",
+    "coverageReporters": [
+      "text",
+      "lcov",
+      "clover"
+    ],
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ]
+  }
+}
