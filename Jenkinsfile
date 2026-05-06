@@ -16,8 +16,6 @@ pipeline {
         buildDiscarder(logRotator(numToKeepStr: '10'))
         timestamps()
         ansiColor('xterm')
-        // This allows multiple builds of this job to run at once if executors are available
-        // To block concurrency, you would add: disableConcurrentBuilds()
     }
 
     stages {
@@ -31,13 +29,12 @@ pipeline {
             }
         }
 
-        // ── RUN LINT AND TEST IN PARALLEL ───────────────────────
+        // RUN LINT AND TEST IN PARALLEL
         stage('Quality Checks') {
             parallel {
                 stage('Lint') {
                     steps {
                         echo '🔍 Running ESLint...'
-                        // Generates report but doesn't fail the build immediately
                         sh 'npx eslint src/**/*.js tests/**/*.js || true'
                     }
                 }
@@ -74,9 +71,8 @@ pipeline {
             }
         }
 
-        /* 
-        // Uncomment these when your Docker credentials are ready
-        stage('Docker Operations') {
+ 
+       stage('Docker Operations') {
             steps {
                 echo '🐳 Building and Pushing Image...'
                 sh "docker build -t ${DOCKER_IMAGE}:${BUILD_NUMBER} ."
@@ -91,7 +87,7 @@ pipeline {
                 }
             }
         }
-        */
+
 
         stage('Archive') {
             steps {
@@ -105,17 +101,15 @@ pipeline {
     post {
         success {
             echo """
-            ============================================
             ✅ PIPELINE SUCCESS
             Build # : ${env.BUILD_NUMBER}
-            ============================================
             """
         }
         failure {
             echo "❌ PIPELINE FAILED - Check logs for errors."
         }
         always {
-            cleanWs() // Keeps the server clean
+            cleanWs()
         }
     }
 }
