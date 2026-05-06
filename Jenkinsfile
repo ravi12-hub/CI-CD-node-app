@@ -4,7 +4,7 @@ pipeline {
     environment {
         NODE_ENV     = 'test'
         APP_NAME     = 'cicd-node-app'
-        DOCKER_IMAGE = "ravisharma79/${APP_NAME}"
+        DOCKER_IMAGE = "ravisharma7963/${APP_NAME}"
     }
 
     tools {
